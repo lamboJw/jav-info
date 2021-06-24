@@ -85,7 +85,9 @@ class Jav_info extends CI_Controller
 		foreach ($list as $item) {      //获取所有搜索结果的信息
 			$detail_arr[] = pq($item)->attr("href");        //搜索结果的链接
 			$arr['thumb'] = pq($item)->find("img")->attr("src");
+			$data['thumb'] = $this->combine_img($data['thumb']);
 			$arr['poster'] = pq($item)->find("img")->attr("src");
+			$data['poster'] = $this->combine_img($data['poster']);
 			$arr['title'] = pq($item)->find("img")->attr("title");
 			$data[] = $arr;
 		}
@@ -109,6 +111,7 @@ class Jav_info extends CI_Controller
 		$detail = $this->util->http_request($url, [], "GET", false, 120, [], true);
 		phpQuery::newDocument($detail);
 		$data['fanart'] = pq(".screencap")->find("img")->attr("src");
+		$data['fanart'] = $this->combine_img($data['fanart']);
 		$info = pq(".info p");
 		$data["num"] = $data["premiered"] = $data["release"] = $data["runtime"] = $data["director"] = $data["maker"] = $data["label"] = $data["set"] = "";
 		foreach ($info as $val) {
@@ -458,5 +461,12 @@ class Jav_info extends CI_Controller
 				}
 			}
 		}
+	}
+
+	public function combine_img($url){
+		if(!empty($url) && strpos($url,'http') === false){
+			$url = 'https://www.javbus.com/'.ltrim($url, '/');
+		}
+		return $url;
 	}
 }
